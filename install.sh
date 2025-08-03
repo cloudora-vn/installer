@@ -534,37 +534,40 @@ exec ${INSTALL_DIR}/corapanel-agent "\$@"
 EOF
     ${SUDO} chmod +x /usr/local/bin/corapanel-agent
     
-    # Create corapctl control script
-    ${SUDO} cat > /usr/local/bin/corapctl <<EOF
-#!/bin/bash
-export BASE_DIR="${INSTALL_DIR}"
-export CONFIG_DIR="${CONFIG_DIR}"
-export DATA_DIR="${DATA_DIR}"
-export LOG_DIR="${LOG_DIR}"
-
-case "\$1" in
-    start)
-        systemctl start corapanel
-        ;;
-    stop)
-        systemctl stop corapanel
-        ;;
-    restart)
-        systemctl restart corapanel
-        ;;
-    status)
-        systemctl status corapanel
-        ;;
-    logs)
-        journalctl -u corapanel -f
-        ;;
-    *)
-        echo "Usage: corapctl {start|stop|restart|status|logs}"
-        exit 1
-        ;;
-esac
-EOF
+    # Create language directory
+    ${SUDO} mkdir -p /usr/local/bin/lang
+    
+    # Download and configure corapctl control script
+    log "Downloading corapctl control script..."
+    ${SUDO} curl -fsSL -o /usr/local/bin/corapctl "https://raw.githubusercontent.com/cloudora-vn/installer/main/corapctl"
+    
+    # Replace placeholders in corapctl
+    ${SUDO} sed -i "s|BASE_DIR=directory|BASE_DIR=${INSTALL_DIR}|g" /usr/local/bin/corapctl
+    ${SUDO} sed -i "s|ORIGINAL_PORT=port|ORIGINAL_PORT=${PANEL_PORT}|g" /usr/local/bin/corapctl
+    ${SUDO} sed -i "s|ORIGINAL_VERSION=version|ORIGINAL_VERSION=${ACTUAL_VERSION:-latest}|g" /usr/local/bin/corapctl
+    ${SUDO} sed -i "s|ORIGINAL_ENTRANCE=entrance|ORIGINAL_ENTRANCE=index|g" /usr/local/bin/corapctl
+    ${SUDO} sed -i "s|ORIGINAL_USERNAME=username|ORIGINAL_USERNAME=${PANEL_USERNAME}|g" /usr/local/bin/corapctl
+    ${SUDO} sed -i "s|ORIGINAL_PASSWORD=password|ORIGINAL_PASSWORD=${PANEL_PASSWORD}|g" /usr/local/bin/corapctl
+    
     ${SUDO} chmod +x /usr/local/bin/corapctl
+    
+    # Create basic English language file
+    ${SUDO} cat > /usr/local/bin/lang/en.sh <<'EOF'
+PANEL_CONTROL_SCRIPT="CoraPanel Control Script"
+TXT_PANEL_SERVICE_STATUS="Show service status"
+TXT_PANEL_SERVICE_START="Start service"
+TXT_PANEL_SERVICE_STOP="Stop service"
+TXT_PANEL_SERVICE_RESTART="Restart service"
+TXT_PANEL_SERVICE_UNINSTALL="Uninstall CoraPanel"
+TXT_PANEL_SERVICE_USER_INFO="Show user information"
+TXT_PANEL_SERVICE_LISTEN_IP="Show listening IP"
+TXT_PANEL_SERVICE_VERSION="Show version"
+TXT_PANEL_SERVICE_UPDATE="Update CoraPanel"
+TXT_PANEL_SERVICE_RESET="Reset configuration"
+TXT_PANEL_SERVICE_RESTORE="Restore configuration"
+TXT_PANEL_SERVICE_REQUIRE_CORE_OR_AGENT="Please specify: core or agent"
+TXT_PANEL_SERVICE_REQUIRE_CORE_AGENT_OR_ALL="Please specify: core, agent, or all"
+EOF
     
     # Keep symlink for corapanel-core
     ${SUDO} ln -sf ${INSTALL_DIR}/corapanel-core /usr/local/bin/corapanel-core
