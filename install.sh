@@ -6,7 +6,8 @@ set -e
 # Usage: ./install.sh [version]
 # version can be: latest (default), beta, or a specific version like v1.0.0
 
-VERSION=${1:-latest}
+# Get version from command line argument
+INSTALL_VERSION=${1:-latest}
 BASE_URL="https://raw.githubusercontent.com/cloudora-vn/installer/main/binaries"
 INSTALL_DIR="/opt/corapanel"
 DATA_DIR="/var/lib/corapanel"
@@ -91,13 +92,9 @@ check_root() {
 # Detect OS
 detect_os() {
     if [[ -f /etc/os-release ]]; then
-        # Save VERSION variable before sourcing os-release
-        local SAVED_VERSION="$VERSION"
         . /etc/os-release
         OS=$ID
-        OS_VERSION=$VERSION_ID
-        # Restore VERSION variable
-        VERSION="$SAVED_VERSION"
+        OS_VERSION=$INSTALL_VERSION_ID
     elif type lsb_release >/dev/null 2>&1; then
         OS=$(lsb_release -si | tr '[:upper:]' '[:lower:]')
         OS_VERSION=$(lsb_release -sr)
@@ -465,17 +462,17 @@ install_corapanel() {
     log "Installing CoraPanel..." "$YELLOW"
     
     # Determine install mode
-    log "Received VERSION parameter: ${VERSION}" "$CYAN"
+    log "Received INSTALL_VERSION parameter: ${INSTALL_VERSION}" "$CYAN"
     
-    if [[ "$VERSION" == "beta" ]]; then
+    if [[ "$INSTALL_VERSION" == "beta" ]]; then
         INSTALL_MODE="beta"
         log "Installing BETA version (not for production)" "$YELLOW"
-    elif [[ "$VERSION" == "latest" ]]; then
+    elif [[ "$INSTALL_VERSION" == "latest" ]]; then
         INSTALL_MODE="latest"
         log "Installing latest stable version"
     else
         INSTALL_MODE="releases"
-        log "Installing specific version: ${VERSION}" "$YELLOW"
+        log "Installing specific version: ${INSTALL_VERSION}" "$YELLOW"
     fi
     
     log "INSTALL_MODE set to: ${INSTALL_MODE}" "$CYAN"
@@ -491,7 +488,7 @@ install_corapanel() {
     # Get actual version for beta/latest
     if [[ "$INSTALL_MODE" == "beta" ]] || [[ "$INSTALL_MODE" == "latest" ]]; then
         VERSION_URL="${BASE_URL}/${INSTALL_MODE}/version.txt"
-        ACTUAL_VERSION=$(curl -sL "$VERSION_URL" 2>/dev/null | head -n1 | tr -d '\r\n')
+        ACTUAL_VERSION=$(curl -sL "$INSTALL_VERSION_URL" 2>/dev/null | head -n1 | tr -d '\r\n')
         
         if [[ -n "$ACTUAL_VERSION" ]]; then
             log "Version: ${ACTUAL_VERSION}"
@@ -499,8 +496,8 @@ install_corapanel() {
         
         DOWNLOAD_PATH="${BASE_URL}/${INSTALL_MODE}"
     else
-        ACTUAL_VERSION="${VERSION}"
-        DOWNLOAD_PATH="${BASE_URL}/releases/${VERSION}"
+        ACTUAL_VERSION="${INSTALL_VERSION}"
+        DOWNLOAD_PATH="${BASE_URL}/releases/${INSTALL_VERSION}"
     fi
     
     # Download binaries
@@ -691,7 +688,7 @@ post_installation() {
     # Save installation info
     cat > ${CONFIG_DIR}/install.info <<EOF
 Installation Date: $(date)
-Version: ${ACTUAL_VERSION:-$VERSION}
+Version: ${ACTUAL_VERSION:-$INSTALL_VERSION}
 Mode: ${INSTALL_MODE}
 Architecture: ${ARCH}
 OS: ${OS} ${OS_VERSION}
@@ -716,7 +713,7 @@ display_summary() {
     echo ""
     echo -e "${GREEN}CoraPanel Details:${NC}"
     echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-    echo -e "${YELLOW}Version:${NC} ${ACTUAL_VERSION:-$VERSION}"
+    echo -e "${YELLOW}Version:${NC} ${ACTUAL_VERSION:-$INSTALL_VERSION}"
     if [[ "$INSTALL_MODE" == "beta" ]]; then
         echo -e "${YELLOW}Mode:${NC} ${RED}BETA (Testing Only)${NC}"
     fi
