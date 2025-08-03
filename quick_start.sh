@@ -14,7 +14,10 @@ NC='\033[0m' # No Color
 
 # Configuration
 GITHUB_REPO="cloudora-vn/installer"
-INSTALL_MODE=${INSTALL_MODE:-"latest"}
+# Check if INSTALL_MODE is already set from environment
+if [[ -z "${INSTALL_MODE}" ]]; then
+    INSTALL_MODE="latest"  # Default to latest if not set
+fi
 CUSTOM_VERSION=${CUSTOM_VERSION:-""}
 
 # Banner
@@ -25,7 +28,7 @@ echo "║       Powered by Cloudora VN          ║"
 echo "╚═══════════════════════════════════════╝"
 echo -e "${NC}"
 
-# Parse command line arguments
+# Parse command line arguments (override environment if provided)
 for arg in "$@"; do
     case $arg in
         beta|--beta)
@@ -44,6 +47,17 @@ for arg in "$@"; do
             echo "  latest, --latest   Install latest stable version (default)"
             echo "  --version=VERSION  Install specific version"
             echo "  -h, --help        Show this help message"
+            echo ""
+            echo "Environment variables:"
+            echo "  INSTALL_MODE=beta  Install beta version"
+            echo "  INSTALL_MODE=latest Install latest stable version"
+            echo ""
+            echo "Examples:"
+            echo "  # Install beta using environment variable:"
+            echo "  curl -fsSL $GITHUB_REPO/quick_start.sh | INSTALL_MODE=beta bash"
+            echo ""
+            echo "  # Install beta using argument:"
+            echo "  curl -fsSL $GITHUB_REPO/quick_start.sh | bash -s beta"
             exit 0
             ;;
     esac
