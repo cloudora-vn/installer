@@ -465,6 +465,8 @@ install_corapanel() {
     log "Installing CoraPanel..." "$YELLOW"
     
     # Determine install mode
+    log "Received VERSION parameter: ${VERSION}" "$CYAN"
+    
     if [[ "$VERSION" == "beta" ]]; then
         INSTALL_MODE="beta"
         log "Installing BETA version (not for production)" "$YELLOW"
@@ -473,8 +475,10 @@ install_corapanel() {
         log "Installing latest stable version"
     else
         INSTALL_MODE="releases"
-        log "Installing version ${VERSION}"
+        log "Installing specific version: ${VERSION}" "$YELLOW"
     fi
+    
+    log "INSTALL_MODE set to: ${INSTALL_MODE}" "$CYAN"
     
     # Create directories
     ${SUDO} mkdir -p ${INSTALL_DIR}
