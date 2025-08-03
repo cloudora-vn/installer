@@ -31,10 +31,10 @@ Binaries are stored in the `binaries/` directory:
 2. Extract and install:
 
 ```bash
-tar -xzf corapanel-agent-linux-amd64.tar.gz
-tar -xzf corapanel-core-linux-amd64.tar.gz
-sudo mv corapanel-agent-linux-amd64 /usr/local/bin/corapanel-agent
-sudo mv corapanel-core-linux-amd64 /usr/local/bin/corapanel-core
+tar -xzf corapanel-agent.tar.gz
+tar -xzf corapanel-core.tar.gz
+sudo mv corapanel-agent /usr/local/bin/corapanel-agent
+sudo mv corapanel-core /usr/local/bin/corapanel-core
 sudo chmod +x /usr/local/bin/corapanel-*
 ```
 
@@ -45,5 +45,5 @@ sudo chmod +x /usr/local/bin/corapanel-*
 
 ## Build Info
 
-- Latest build: 2025-08-03 08:38:16 UTC
-- Latest commit: 2d2eb126dbd155de97aa88a47f0bc20e8c5ac03d
+- Latest build: 2025-08-03 08:41:16 UTC
+- Latest commit: 57ab7a11453cb2bbf34bbd9e9034b2a9d6bea0be

@@ -25,22 +25,22 @@ cd /opt/corapanel
 
 # Download binaries
 echo "Downloading CoraPanel Agent..."
-sudo curl -L -o agent.tar.gz "${BASE_URL}/${VERSION}/corapanel-agent-linux-${ARCH}.tar.gz"
+sudo curl -L -o agent.tar.gz "${BASE_URL}/${VERSION}/corapanel-agent.tar.gz"
 
 echo "Downloading CoraPanel Core..."
-sudo curl -L -o core.tar.gz "${BASE_URL}/${VERSION}/corapanel-core-linux-${ARCH}.tar.gz"
+sudo curl -L -o core.tar.gz "${BASE_URL}/${VERSION}/corapanel-core.tar.gz"
 
 # Extract
 sudo tar -xzf agent.tar.gz
 sudo tar -xzf core.tar.gz
 
 # Set permissions
-sudo chmod +x corapanel-agent-linux-${ARCH}
-sudo chmod +x corapanel-core-linux-${ARCH}
+sudo chmod +x corapanel-agent
+sudo chmod +x corapanel-core
 
 # Create symlinks
-sudo ln -sf /opt/corapanel/corapanel-agent-linux-${ARCH} /usr/local/bin/corapanel-agent
-sudo ln -sf /opt/corapanel/corapanel-core-linux-${ARCH} /usr/local/bin/corapanel-core
+sudo ln -sf /opt/corapanel/corapanel-agent /usr/local/bin/corapanel-agent
+sudo ln -sf /opt/corapanel/corapanel-core /usr/local/bin/corapanel-core
 
 # Cleanup
 sudo rm -f agent.tar.gz core.tar.gz
