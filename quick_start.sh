@@ -89,10 +89,14 @@ fi
 # Detect OS
 detect_os() {
     if [[ -f /etc/os-release ]]; then
+        # Save our VERSION variable before sourcing os-release
+        local SAVED_VERSION="$VERSION"
         . /etc/os-release
         OS=$ID
         OS_VERSION=$VERSION_ID
         OS_NAME=$PRETTY_NAME
+        # Restore our VERSION variable
+        VERSION="$SAVED_VERSION"
     elif type lsb_release >/dev/null 2>&1; then
         OS=$(lsb_release -si | tr '[:upper:]' '[:lower:]')
         OS_VERSION=$(lsb_release -sr)
