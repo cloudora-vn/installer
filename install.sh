@@ -542,12 +542,13 @@ EOF
     ${SUDO} curl -fsSL -o /usr/local/bin/corapctl "https://raw.githubusercontent.com/cloudora-vn/installer/main/corapctl"
     
     # Replace placeholders in corapctl
-    ${SUDO} sed -i "s|BASE_DIR=directory|BASE_DIR=${INSTALL_DIR}|g" /usr/local/bin/corapctl
-    ${SUDO} sed -i "s|ORIGINAL_PORT=port|ORIGINAL_PORT=${PANEL_PORT}|g" /usr/local/bin/corapctl
-    ${SUDO} sed -i "s|ORIGINAL_VERSION=version|ORIGINAL_VERSION=${ACTUAL_VERSION:-latest}|g" /usr/local/bin/corapctl
-    ${SUDO} sed -i "s|ORIGINAL_ENTRANCE=entrance|ORIGINAL_ENTRANCE=index|g" /usr/local/bin/corapctl
-    ${SUDO} sed -i "s|ORIGINAL_USERNAME=username|ORIGINAL_USERNAME=${PANEL_USERNAME}|g" /usr/local/bin/corapctl
-    ${SUDO} sed -i "s|ORIGINAL_PASSWORD=password|ORIGINAL_PASSWORD=${PANEL_PASSWORD}|g" /usr/local/bin/corapctl
+    ${SUDO} sed -i "s|^BASE_DIR=.*|BASE_DIR=\"${INSTALL_DIR}\"|g" /usr/local/bin/corapctl
+    ${SUDO} sed -i "s|^ORIGINAL_PORT=.*|ORIGINAL_PORT=${PANEL_PORT}|g" /usr/local/bin/corapctl
+    ${SUDO} sed -i "s|^ORIGINAL_VERSION=.*|ORIGINAL_VERSION=\"${ACTUAL_VERSION:-latest}\"|g" /usr/local/bin/corapctl
+    ${SUDO} sed -i "s|^ORIGINAL_ENTRANCE=.*|ORIGINAL_ENTRANCE=\"index\"|g" /usr/local/bin/corapctl
+    ${SUDO} sed -i "s|^ORIGINAL_USERNAME=.*|ORIGINAL_USERNAME=\"${PANEL_USERNAME}\"|g" /usr/local/bin/corapctl
+    ${SUDO} sed -i "s|^ORIGINAL_PASSWORD=.*|ORIGINAL_PASSWORD=\"${PANEL_PASSWORD}\"|g" /usr/local/bin/corapctl
+    ${SUDO} sed -i "s|^LANGUAGE=.*|LANGUAGE=\"en\"|g" /usr/local/bin/corapctl
     
     ${SUDO} chmod +x /usr/local/bin/corapctl
     
