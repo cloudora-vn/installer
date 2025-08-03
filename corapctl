@@ -4,12 +4,12 @@ action=$1
 target=$2
 args=$@
 
-BASE_DIR=directory
-ORIGINAL_PORT=port
-ORIGINAL_VERSION=version
+BASE_DIR=/opt
+ORIGINAL_PORT=19999
+ORIGINAL_VERSION=v1.0.0
 ORIGINAL_ENTRANCE=entrance
-ORIGINAL_USERNAME=username
-ORIGINAL_PASSWORD=password
+ORIGINAL_USERNAME=admin
+ORIGINAL_PASSWORD=Admin123!
 LANGUAGE=en
 
 if [ -f "/usr/local/bin/lang/$LANGUAGE.sh" ]; then
