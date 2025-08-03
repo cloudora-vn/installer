@@ -19,6 +19,7 @@ if [[ -z "${INSTALL_MODE}" ]]; then
     INSTALL_MODE="latest"  # Default to latest if not set
 fi
 CUSTOM_VERSION=${CUSTOM_VERSION:-""}
+AUTO_CONFIRM=${AUTO_CONFIRM:-false}
 
 # Banner
 echo -e "${BLUE}"
@@ -40,12 +41,16 @@ for arg in "$@"; do
         --version=*)
             CUSTOM_VERSION="${arg#*=}"
             ;;
+        -y|--yes)
+            AUTO_CONFIRM=true
+            ;;
         -h|--help)
             echo "Usage: $0 [OPTIONS]"
             echo "Options:"
             echo "  beta, --beta       Install beta version"
             echo "  latest, --latest   Install latest stable version (default)"
             echo "  --version=VERSION  Install specific version"
+            echo "  -y, --yes         Auto confirm installation"
             echo "  -h, --help        Show this help message"
             echo ""
             echo "Environment variables:"
@@ -343,12 +348,17 @@ main() {
     else
         echo -e "${YELLOW}[?] Ready to install CoraPanel ${VERSION} for ${ARCHITECTURE}${NC}"
     fi
-    read -p "Continue? (y/N): " -n 1 -r
-    echo ""
     
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo -e "${YELLOW}[i] Installation cancelled${NC}"
-        exit 0
+    if [[ "$AUTO_CONFIRM" == "true" ]]; then
+        echo -e "${GREEN}[✓] Auto-confirming installation${NC}"
+    else
+        read -p "Continue? (y/N): " -n 1 -r
+        echo ""
+        
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo -e "${YELLOW}[i] Installation cancelled${NC}"
+            exit 0
+        fi
     fi
     
     # Download and install
