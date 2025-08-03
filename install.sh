@@ -440,13 +440,19 @@ download_with_retry() {
     local retry=0
     
     while [ $retry -lt $max_retries ]; do
-        if ${SUDO} curl -L -f -o "$output" "$url" 2>/dev/null; then
+        log "Downloading from: $url (attempt $((retry+1))/$max_retries)" "$YELLOW"
+        if ${SUDO} curl -L -f -o "$output" "$url"; then
+            log "Download successful: $output" "$GREEN"
             return 0
         fi
         retry=$((retry+1))
-        [ $retry -lt $max_retries ] && sleep 2
+        if [ $retry -lt $max_retries ]; then
+            log "Download failed, retrying in 2 seconds..." "$YELLOW"
+            sleep 2
+        fi
     done
     
+    log "Failed to download after $max_retries attempts: $url" "$RED"
     return 1
 }
 
