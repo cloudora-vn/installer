@@ -249,11 +249,16 @@ download_and_install() {
     echo ""
     
     # Run the installation script with version parameter
+    echo -e "${CYAN}[DEBUG] INSTALL_MODE=$INSTALL_MODE, VERSION=$VERSION${NC}"
+    
     if [[ "$INSTALL_MODE" == "beta" ]]; then
+        echo -e "${CYAN}[DEBUG] Running: bash install.sh beta${NC}"
         bash install.sh beta
-    elif [[ "$VERSION" == "latest" ]]; then
+    elif [[ "$INSTALL_MODE" == "latest" ]]; then
+        echo -e "${CYAN}[DEBUG] Running: bash install.sh latest${NC}"
         bash install.sh latest
     else
+        echo -e "${CYAN}[DEBUG] Running: bash install.sh \"$VERSION\"${NC}"
         bash install.sh "$VERSION"
     fi
     
