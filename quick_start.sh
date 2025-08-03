@@ -340,7 +340,6 @@ main() {
     echo ""
     if [[ "$INSTALL_MODE" == "beta" ]]; then
         echo -e "${YELLOW}[?] Ready to install CoraPanel BETA ${VERSION} for ${ARCHITECTURE}${NC}"
-        echo -e "${RED}    ⚠️  Beta version may be unstable${NC}"
     else
         echo -e "${YELLOW}[?] Ready to install CoraPanel ${VERSION} for ${ARCHITECTURE}${NC}"
     fi
