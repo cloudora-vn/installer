@@ -45,12 +45,36 @@
 
 ## 📦 Installation
 
+### One-Line Installation Commands
+
+#### Latest Stable Version
+```bash
+# With confirmation prompt
+curl -fsSL https://raw.githubusercontent.com/cloudora-vn/installer/main/quick_start.sh | bash
+
+# Auto-install (no prompts)
+curl -fsSL https://raw.githubusercontent.com/cloudora-vn/installer/main/quick_start.sh | bash -s -- -y
+```
+
+#### Beta Version
+```bash
+# With confirmation prompt
+curl -fsSL https://raw.githubusercontent.com/cloudora-vn/installer/main/quick_start.sh | bash -s beta
+
+# Auto-install (recommended)
+curl -fsSL https://raw.githubusercontent.com/cloudora-vn/installer/main/quick_start.sh | bash -s beta -y
+```
+
 ### Quick Install (Recommended)
 
 Install the latest stable version:
 
 ```bash
+# Interactive installation (will ask for confirmation)
 curl -fsSL https://raw.githubusercontent.com/cloudora-vn/installer/main/quick_start.sh | bash
+
+# Auto-confirm installation (no prompts)
+curl -fsSL https://raw.githubusercontent.com/cloudora-vn/installer/main/quick_start.sh | bash -s -- -y
 ```
 
 ### Install with Custom Settings
@@ -72,7 +96,11 @@ DATABASE_TYPE=mariadb \
 ⚠️ **Warning**: Beta versions are for testing only, not for production use.
 
 ```bash
-INSTALL_MODE=beta curl -fsSL https://raw.githubusercontent.com/cloudora-vn/installer/main/quick_start.sh | bash
+# Interactive beta installation
+curl -fsSL https://raw.githubusercontent.com/cloudora-vn/installer/main/quick_start.sh | bash -s beta
+
+# Auto-confirm beta installation (recommended for testing)
+curl -fsSL https://raw.githubusercontent.com/cloudora-vn/installer/main/quick_start.sh | bash -s beta -y
 ```
 
 ### Manual Installation
@@ -84,6 +112,9 @@ cd installer
 
 # Run the installer
 ./install.sh latest  # or 'beta' for testing version
+
+# Or use quick_start.sh with auto-confirm
+./quick_start.sh beta -y
 ```
 
 ---
