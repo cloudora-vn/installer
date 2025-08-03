@@ -493,6 +493,7 @@ install_corapanel() {
     log "Downloading CoraPanel binaries..."
     
     if [[ "$INSTALL_MODE" == "beta" ]] || [[ "$INSTALL_MODE" == "latest" ]]; then
+        # Beta files don't have architecture in filename
         download_with_retry "${DOWNLOAD_PATH}/corapanel-agent.tar.gz" "agent.tar.gz" || error_exit "Failed to download agent"
         download_with_retry "${DOWNLOAD_PATH}/corapanel-core.tar.gz" "core.tar.gz" || error_exit "Failed to download core"
     else

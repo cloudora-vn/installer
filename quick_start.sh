@@ -25,6 +25,30 @@ echo "║       Powered by Cloudora VN          ║"
 echo "╚═══════════════════════════════════════╝"
 echo -e "${NC}"
 
+# Parse command line arguments
+for arg in "$@"; do
+    case $arg in
+        beta|--beta)
+            INSTALL_MODE="beta"
+            ;;
+        latest|--latest)
+            INSTALL_MODE="latest"
+            ;;
+        --version=*)
+            CUSTOM_VERSION="${arg#*=}"
+            ;;
+        -h|--help)
+            echo "Usage: $0 [OPTIONS]"
+            echo "Options:"
+            echo "  beta, --beta       Install beta version"
+            echo "  latest, --latest   Install latest stable version (default)"
+            echo "  --version=VERSION  Install specific version"
+            echo "  -h, --help        Show this help message"
+            exit 0
+            ;;
+    esac
+done
+
 # Check install mode
 if [[ "$INSTALL_MODE" == "beta" ]]; then
     echo -e "${YELLOW}⚠️  BETA MODE: Installing testing version${NC}"
@@ -165,32 +189,16 @@ get_latest_version() {
         VERSION=$CUSTOM_VERSION
         echo -e "${GREEN}[✓] Using custom version: ${VERSION}${NC}"
     elif [[ "$INSTALL_MODE" == "beta" ]]; then
-        # For beta, check version.txt in beta folder
-        VERSION_URL="https://raw.githubusercontent.com/${GITHUB_REPO}/main/binaries/beta/version.txt"
-        VERSION=$(curl -sL "$VERSION_URL" 2>/dev/null | head -n1 | tr -d '\r\n')
-        
-        if [[ -n "$VERSION" ]]; then
-            echo -e "${GREEN}[✓] Beta version: ${VERSION}${NC}"
-        else
-            VERSION="beta"
-            echo -e "${YELLOW}[!] Using beta channel${NC}"
-        fi
+        # For beta, always use beta channel (no version.txt needed)
+        VERSION="beta"
+        echo -e "${YELLOW}[!] Using BETA channel for testing${NC}"
+        echo -e "${YELLOW}    Note: Beta version may be unstable${NC}"
     else
-        # For latest stable version
-        VERSION_URL="https://raw.githubusercontent.com/${GITHUB_REPO}/main/binaries/latest/version.txt"
-        VERSION=$(curl -sL "$VERSION_URL" 2>/dev/null | head -n1 | tr -d '\r\n')
-        
-        if [[ -z "$VERSION" ]]; then
-            # Try GitHub releases as fallback
-            VERSION=$(curl -s "https://api.github.com/repos/${GITHUB_REPO}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' | sed 's/^v//')
-        fi
-        
-        if [[ -n "$VERSION" && "$VERSION" != "null" ]]; then
-            echo -e "${GREEN}[✓] Latest stable version: ${VERSION}${NC}"
-        else
-            VERSION="latest"
-            echo -e "${YELLOW}[!] Using latest channel${NC}"
-        fi
+        # For latest stable version - use beta files for now until we have stable releases
+        # This is temporary until we have proper stable releases
+        VERSION="latest"
+        echo -e "${GREEN}[✓] Using latest stable channel${NC}"
+        echo -e "${YELLOW}    Note: Using beta builds as stable (temporary)${NC}"
     fi
 }
 
