@@ -461,18 +461,16 @@ download_with_retry() {
 install_corapanel() {
     log "Installing CoraPanel..." "$YELLOW"
     
-    # Determine install mode
+    # Determine install mode - ONLY beta or latest
     log "Received INSTALL_VERSION parameter: ${INSTALL_VERSION}" "$CYAN"
     
     if [[ "$INSTALL_VERSION" == "beta" ]]; then
         INSTALL_MODE="beta"
         log "Installing BETA version (not for production)" "$YELLOW"
-    elif [[ "$INSTALL_VERSION" == "latest" ]]; then
+    else
+        # Default to latest for any other value
         INSTALL_MODE="latest"
         log "Installing latest stable version"
-    else
-        INSTALL_MODE="releases"
-        log "Installing specific version: ${INSTALL_VERSION}" "$YELLOW"
     fi
     
     log "INSTALL_MODE set to: ${INSTALL_MODE}" "$CYAN"
@@ -485,32 +483,22 @@ install_corapanel() {
     
     cd ${INSTALL_DIR}
     
-    # Get actual version for beta/latest
-    if [[ "$INSTALL_MODE" == "beta" ]] || [[ "$INSTALL_MODE" == "latest" ]]; then
-        VERSION_URL="${BASE_URL}/${INSTALL_MODE}/version.txt"
-        ACTUAL_VERSION=$(curl -sL "$INSTALL_VERSION_URL" 2>/dev/null | head -n1 | tr -d '\r\n')
-        
-        if [[ -n "$ACTUAL_VERSION" ]]; then
-            log "Version: ${ACTUAL_VERSION}"
-        fi
-        
-        DOWNLOAD_PATH="${BASE_URL}/${INSTALL_MODE}"
+    # Set download path - ONLY beta or latest folders exist
+    if [[ "$INSTALL_MODE" == "beta" ]]; then
+        DOWNLOAD_PATH="${BASE_URL}/beta"
+        log "Using BETA channel"
     else
-        ACTUAL_VERSION="${INSTALL_VERSION}"
-        DOWNLOAD_PATH="${BASE_URL}/releases/${INSTALL_VERSION}"
+        # For now, latest uses beta files (temporary until we have stable releases)
+        DOWNLOAD_PATH="${BASE_URL}/beta"  
+        log "Using LATEST channel (temporarily using beta files)"
     fi
     
     # Download binaries
-    log "Downloading CoraPanel binaries..."
+    log "Downloading CoraPanel binaries from: ${DOWNLOAD_PATH}"
     
-    if [[ "$INSTALL_MODE" == "beta" ]] || [[ "$INSTALL_MODE" == "latest" ]]; then
-        # Beta files don't have architecture in filename
-        download_with_retry "${DOWNLOAD_PATH}/corapanel-agent.tar.gz" "agent.tar.gz" || error_exit "Failed to download agent"
-        download_with_retry "${DOWNLOAD_PATH}/corapanel-core.tar.gz" "core.tar.gz" || error_exit "Failed to download core"
-    else
-        download_with_retry "${DOWNLOAD_PATH}/corapanel-agent-${ARCH}.tar.gz" "agent.tar.gz" || error_exit "Failed to download agent"
-        download_with_retry "${DOWNLOAD_PATH}/corapanel-core-${ARCH}.tar.gz" "core.tar.gz" || error_exit "Failed to download core"
-    fi
+    # Both beta and latest use files WITHOUT architecture suffix
+    download_with_retry "${DOWNLOAD_PATH}/corapanel-agent.tar.gz" "agent.tar.gz" || error_exit "Failed to download agent"
+    download_with_retry "${DOWNLOAD_PATH}/corapanel-core.tar.gz" "core.tar.gz" || error_exit "Failed to download core"
     
     # Extract files
     log "Extracting files..."
