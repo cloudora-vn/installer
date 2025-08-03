@@ -509,10 +509,65 @@ install_corapanel() {
     ${SUDO} chmod +x corapanel-agent
     ${SUDO} chmod +x corapanel-core
     
-    # Create symlinks
-    ${SUDO} ln -sf ${INSTALL_DIR}/corapanel-agent /usr/local/bin/corapanel-agent
+    # Create wrapper scripts with BASE_DIR
+    log "Creating wrapper scripts..."
+    
+    # Create corapanel wrapper
+    ${SUDO} cat > /usr/local/bin/corapanel <<EOF
+#!/bin/bash
+export BASE_DIR="${INSTALL_DIR}"
+export CONFIG_DIR="${CONFIG_DIR}"
+export DATA_DIR="${DATA_DIR}"
+export LOG_DIR="${LOG_DIR}"
+exec ${INSTALL_DIR}/corapanel-core "\$@"
+EOF
+    ${SUDO} chmod +x /usr/local/bin/corapanel
+    
+    # Create corapanel-agent wrapper
+    ${SUDO} cat > /usr/local/bin/corapanel-agent <<EOF
+#!/bin/bash
+export BASE_DIR="${INSTALL_DIR}"
+export CONFIG_DIR="${CONFIG_DIR}"
+export DATA_DIR="${DATA_DIR}"
+export LOG_DIR="${LOG_DIR}"
+exec ${INSTALL_DIR}/corapanel-agent "\$@"
+EOF
+    ${SUDO} chmod +x /usr/local/bin/corapanel-agent
+    
+    # Create corapctl control script
+    ${SUDO} cat > /usr/local/bin/corapctl <<EOF
+#!/bin/bash
+export BASE_DIR="${INSTALL_DIR}"
+export CONFIG_DIR="${CONFIG_DIR}"
+export DATA_DIR="${DATA_DIR}"
+export LOG_DIR="${LOG_DIR}"
+
+case "\$1" in
+    start)
+        systemctl start corapanel
+        ;;
+    stop)
+        systemctl stop corapanel
+        ;;
+    restart)
+        systemctl restart corapanel
+        ;;
+    status)
+        systemctl status corapanel
+        ;;
+    logs)
+        journalctl -u corapanel -f
+        ;;
+    *)
+        echo "Usage: corapctl {start|stop|restart|status|logs}"
+        exit 1
+        ;;
+esac
+EOF
+    ${SUDO} chmod +x /usr/local/bin/corapctl
+    
+    # Keep symlink for corapanel-core
     ${SUDO} ln -sf ${INSTALL_DIR}/corapanel-core /usr/local/bin/corapanel-core
-    ${SUDO} ln -sf ${INSTALL_DIR}/corapanel-core /usr/local/bin/corapanel
     
     # Cleanup
     ${SUDO} rm -f agent.tar.gz core.tar.gz
