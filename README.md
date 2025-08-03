@@ -45,5 +45,5 @@ sudo chmod +x /usr/local/bin/corapanel-*
 
 ## Build Info
 
-- Latest build: 2025-08-03 10:21:03 UTC
-- Latest commit: 36971aa4a2b6381bddc11d3bd33e29b71207ed8f
+- Latest build: 2025-08-03 10:37:18 UTC
+- Latest commit: f969ef160964b00c3ad2974ac0e159628db282c8
