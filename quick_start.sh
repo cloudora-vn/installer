@@ -352,7 +352,8 @@ main() {
     if [[ "$AUTO_CONFIRM" == "true" ]]; then
         echo -e "${GREEN}[✓] Auto-confirming installation${NC}"
     else
-        read -p "Continue? (y/N): " -n 1 -r
+        echo -ne "${CYAN}Continue? (y/N): ${NC}"
+        read -n 1 -r REPLY </dev/tty
         echo ""
         
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
